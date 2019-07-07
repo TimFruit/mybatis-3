@@ -126,16 +126,27 @@ public class MapperAnnotationBuilder {
   public void parse() {
     String resource = type.toString();
     if (!configuration.isResourceLoaded(resource)) {
+      // 先加载对应的xml配置资源
+      // TODO  重点看mapper的xml配置解析
+      //会先解析对应的mapper配置文件, 包括statement
       loadXmlResource();
+
       configuration.addLoadedResource(resource);
       assistant.setCurrentNamespace(type.getName());
+
+      // 解析mapper类中的@CacheNamespace注解配置, 添加缓存配置到Configuration中, 它对应xml配置中的<cache/>
+      // id为对应的命名空间, 命名空间相同, 注解配置会覆盖xml中的cache配置 (因为使用了map.put() )
       parseCache();
+      // 解析mapper类中的@CacheNamespaceRef注解配置, 添加缓存引用配置到Configuration中, 它对应xml配置中的<cache-ref/>
       parseCacheRef();
+
+
       Method[] methods = type.getMethods();
       for (Method method : methods) {
         try {
           // issue #237
           if (!method.isBridge()) {
+            // TODO  解析类中的方法为mapperStatement, 添加进Configuration中
             parseStatement(method);
           }
         } catch (IncompleteElementException e) {
@@ -143,6 +154,8 @@ public class MapperAnnotationBuilder {
         }
       }
     }
+
+    // 继续解析incompleteMethod
     parsePendingMethods();
   }
 
@@ -161,24 +174,32 @@ public class MapperAnnotationBuilder {
     }
   }
 
+
   private void loadXmlResource() {
     // Spring may not know the real resource name so we check a flag
     // to prevent loading again a resource twice
     // this flag is set at XMLMapperBuilder#bindMapperForNamespace
-    if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
+    if (!configuration.isResourceLoaded("namespace:" + type.getName())) { // 类型路径为对应的命名空间
+      // 1. 默认加载mapper.class所在位置下的同名的xml配置文件
       String xmlResource = type.getName().replace('.', '/') + ".xml";
       // #1347
       InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
       if (inputStream == null) {
         // Search XML mapper that is not in the module but in the classpath.
+        // 2. xml 在classpath下
         try {
+          // 使用对应的类加载器去加载对应的资源, 不同的加载其对应不同的路径  TODO 这里有待研究
           inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
         } catch (IOException e2) {
           // ignore, resource is not required
         }
       }
       if (inputStream != null) {
+
+        // TODO 重点 XMLMapperBuilder
         XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
+        // 解析
+        // namespace, resultMap, cache-ref, statement  TODO parse statement
         xmlParser.parse();
       }
     }
@@ -296,17 +317,25 @@ public class MapperAnnotationBuilder {
     return null;
   }
 
+
+  // 解析statement
   void parseStatement(Method method) {
+    // 解析参数类型 TODO
     Class<?> parameterTypeClass = getParameterType(method);
+    // 语言驱动 TODO
     LanguageDriver languageDriver = getLanguageDriver(method);
+    // 解析注解中的sql
     SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
     if (sqlSource != null) {
       Options options = method.getAnnotation(Options.class);
       final String mappedStatementId = type.getName() + "." + method.getName();
       Integer fetchSize = null;
       Integer timeout = null;
+      // 预编译
       StatementType statementType = StatementType.PREPARED;
       ResultSetType resultSetType = null;
+
+      // sqlCommandType
       SqlCommandType sqlCommandType = getSqlCommandType(method);
       boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
       boolean flushCache = !isSelect;
@@ -315,9 +344,12 @@ public class MapperAnnotationBuilder {
       KeyGenerator keyGenerator;
       String keyProperty = null;
       String keyColumn = null;
+
+      // SqlCommandType.INSERT || SqlCommandType.UPDATE
       if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
         // first check for SelectKey annotation - that overrides everything else
         SelectKey selectKey = method.getAnnotation(SelectKey.class);
+        // 主键生成器 TODO
         if (selectKey != null) {
           keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
           keyProperty = selectKey.keyProperty();
@@ -345,6 +377,7 @@ public class MapperAnnotationBuilder {
         resultSetType = options.resultSetType();
       }
 
+      // ResultMap
       String resultMapId = null;
       ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
       if (resultMapAnnotation != null) {
@@ -353,6 +386,10 @@ public class MapperAnnotationBuilder {
         resultMapId = parseResultMap(method);
       }
 
+
+      // --------------------------------
+      // 解析完类中的各元素之后, 添加mapperStatement进Configuration中
+      // TODO 重点 MapperStatement
       assistant.addMappedStatement(
           mappedStatementId,
           sqlSource,

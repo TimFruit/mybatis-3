@@ -64,10 +64,13 @@ public class MapperRegistry {
       }
       boolean loadCompleted = false;
       try {
+        // 添加进knownMappers, 值为对应的代理工厂(MapperProxyFactory)的类
         knownMappers.put(type, new MapperProxyFactory<>(type));
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
+
+        // 使用注解构建器构建, 会先解析mapper.xml配置文件, 然后再解析mapper.class文件中的注解
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
         loadCompleted = true;
