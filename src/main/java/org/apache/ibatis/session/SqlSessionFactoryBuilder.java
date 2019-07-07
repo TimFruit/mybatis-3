@@ -28,6 +28,8 @@ import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 /**
  * Builds {@link SqlSession} instances.
  *
+ * Mybatis 的入口类, 通过解析xml配置文件, "建造" sqlSessionFactory, 进而创建SqlSession
+ *
  * @author Clinton Begin
  */
 public class SqlSessionFactoryBuilder {
@@ -74,6 +76,7 @@ public class SqlSessionFactoryBuilder {
 
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
+      // 使用XMLConfigBuilder解析xml配置文件
       XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
       return build(parser.parse());
     } catch (Exception e) {
@@ -89,6 +92,7 @@ public class SqlSessionFactoryBuilder {
   }
 
   public SqlSessionFactory build(Configuration config) {
+    // 只提供了一个DefaultSqlSessionFactory类
     return new DefaultSqlSessionFactory(config);
   }
 
