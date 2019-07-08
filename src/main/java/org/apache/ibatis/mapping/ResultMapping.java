@@ -15,17 +15,22 @@
  */
 package org.apache.ibatis.mapping;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 /**
+ * 
+ * 
+ * 查看org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd， 可知， 
+ * ResultMapping对应<ResultMap/> 子元素的属性
+ * 
  * @author Clinton Begin
  */
 public class ResultMapping {
