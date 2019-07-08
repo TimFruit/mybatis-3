@@ -15,11 +15,6 @@
  */
 package org.apache.ibatis.builder.xml;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
-import javax.sql.DataSource;
-
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.datasource.DataSourceFactory;
@@ -38,15 +33,17 @@ import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.AutoMappingBehavior;
-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.LocalCacheScope;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
 /**
+ * 用于解析mybatis-config.xml, 构建{@link Configuration}
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -404,6 +401,11 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   // 加载mapper
+  // =============================================
+  // mybatis加载Mapper的总入口
+  // 1. 通过配置包查找对应的Mapper接口添加， mapper.xml配置文件应在同一个包下
+  // 2. 通过配置resource= "mapper.xml" 路径来加载 
+  // =============================================
   private void mapperElement(XNode parent) throws Exception {  // mappers
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
