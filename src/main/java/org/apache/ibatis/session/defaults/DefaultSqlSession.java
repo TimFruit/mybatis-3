@@ -140,6 +140,11 @@ public class DefaultSqlSession implements SqlSession {
     return this.selectList(statement, parameter, RowBounds.DEFAULT);
   }
 
+
+  // -----------------------------
+  // 最后都是从Configuration中获取对应的mappedStatement
+  // 然后由执行器调用
+  // -----------------------------
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
     try {

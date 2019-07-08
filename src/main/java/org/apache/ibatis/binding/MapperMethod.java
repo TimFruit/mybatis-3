@@ -39,6 +39,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 用于执行对应的sql语句
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -55,23 +56,33 @@ public class MapperMethod {
   }
 
   public Object execute(SqlSession sqlSession, Object[] args) {
+    // 最后都是调用sqlSession.insert, update, delete, select
+
+
     Object result;
     switch (command.getType()) {
+      // 1. 插入
       case INSERT: {
         Object param = method.convertArgsToSqlCommandParam(args);
         result = rowCountResult(sqlSession.insert(command.getName(), param));
         break;
       }
+
+      // 2. 更新
       case UPDATE: {
         Object param = method.convertArgsToSqlCommandParam(args);
         result = rowCountResult(sqlSession.update(command.getName(), param));
         break;
       }
+
+      // 3. 删除
       case DELETE: {
         Object param = method.convertArgsToSqlCommandParam(args);
         result = rowCountResult(sqlSession.delete(command.getName(), param));
         break;
       }
+
+      // 4. 查询
       case SELECT:
         if (method.returnsVoid() && method.hasResultHandler()) {
           executeWithResultHandler(sqlSession, args);
@@ -91,9 +102,13 @@ public class MapperMethod {
           }
         }
         break;
+
+      // flush
       case FLUSH:
         result = sqlSession.flushStatements();
         break;
+
+
       default:
         throw new BindingException("Unknown execution method for: " + command.getName());
     }

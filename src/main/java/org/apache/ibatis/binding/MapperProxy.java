@@ -54,11 +54,14 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     } catch (Throwable t) {
       throw ExceptionUtil.unwrapThrowable(t);
     }
+    // 从缓存中获取方法
+    // 该方法仅仅只是调用方法名绑定的statement #TODO  sqlSession.select()
     final MapperMethod mapperMethod = cachedMapperMethod(method);
     return mapperMethod.execute(sqlSession, args);
   }
 
   private MapperMethod cachedMapperMethod(Method method) {
+    // 如果不存在, 则new MapperMethod(mapperInterface, method, sqlSession.getConfiguration())
     return methodCache.computeIfAbsent(method, k -> new MapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
   }
 
