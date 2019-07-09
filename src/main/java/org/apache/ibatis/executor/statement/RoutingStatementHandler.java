@@ -30,6 +30,8 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ *
+ * 路由statementHandler作用仅仅是通过判断statementType, 生成对应的statementHandler, 作用类似于简单工厂
  * @author Clinton Begin
  */
 public class RoutingStatementHandler implements StatementHandler {
