@@ -40,26 +40,33 @@ public class Plugin implements InvocationHandler {
     this.signatureMap = signatureMap;
   }
 
+
+  // 用于生成对应的插件代理类
   public static Object wrap(Object target, Interceptor interceptor) {
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
     if (interfaces.length > 0) {
+      // jdk动态代理
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,
-          new Plugin(target, interceptor, signatureMap));
+          new Plugin(target, interceptor, signatureMap));  // 实现Interceptor接口 , 对应目标方法作拦截
     }
     return target;
   }
 
+
+  // jdk动态代理之方法调用
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
       Set<Method> methods = signatureMap.get(method.getDeclaringClass());
       if (methods != null && methods.contains(method)) {
+        //调用拦截方法
         return interceptor.intercept(new Invocation(target, method, args));
       }
+      // 真实的方法调用
       return method.invoke(target, args);
     } catch (Exception e) {
       throw ExceptionUtil.unwrapThrowable(e);

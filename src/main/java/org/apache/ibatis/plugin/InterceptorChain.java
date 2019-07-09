@@ -29,7 +29,7 @@ public class InterceptorChain {
 
   public Object pluginAll(Object target) {
     for (Interceptor interceptor : interceptors) {
-      target = interceptor.plugin(target);
+      target = interceptor.plugin(target);  //为目标对象生成动态代理, 用"连接器" "拦截封装" 对应的方法
     }
     return target;
   }
