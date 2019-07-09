@@ -42,10 +42,13 @@ public class MapperRegistry {
 
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+    //在注册表中获取对应的代理工厂
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
     if (mapperProxyFactory == null) {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
+
+    // 生成对应的代理类
     try {
       return mapperProxyFactory.newInstance(sqlSession);
     } catch (Exception e) {
