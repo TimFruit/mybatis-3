@@ -15,23 +15,33 @@
  */
 package org.apache.ibatis.cache.decorators;
 
+import org.apache.ibatis.cache.Cache;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.apache.ibatis.cache.Cache;
-
 /**
+ * 
+ * https://www.cnblogs.com/dolphin0520/p/3784171.html
+ * 强引用: 使用new等生成的对象， 如果从根引用还能到达对应的引用， 即是JVM内存不足， 也不会回收， 会出现OOM异常
+ * 软引用: 软引用用来描述一些有用但非必要的对象。在java中用java.lang.ref.SoftReference表示。 只有在内存不足的时候才会回收该对象。可以用来做缓存， 可以有效避免OOM
+ * 弱引用: 用来描述非必需对象，在发生垃圾回收的时候，就会回收，无论内存是否不足。 在java中，用java.lang.ref.WeakReference类来表示
+ * 虚引用: 虚引用和前面的软引用、弱引用不同，它并不影响对象的生命周期。在java中用java.lang.ref.PhantomReference类表示。如果一个对象与虚引用关联，则跟没有引用与之关联一样，在任何时候都可能被垃圾回收器回收
+ * 
  * Soft Reference cache decorator
  * Thanks to Dr. Heinz Kabutz for his guidance here.
  *
  * @author Clinton Begin
  */
 public class SoftCache implements Cache {
-  private final Deque<Object> hardLinksToAvoidGarbageCollection;
-  private final ReferenceQueue<Object> queueOfGarbageCollectedEntries;
+  // 双端队列 
+  private final Deque<Object> hardLinksToAvoidGarbageCollection;  // 硬连接 避免垃圾回收 
+  // 软引用
+  private final ReferenceQueue<Object> queueOfGarbageCollectedEntries; // 垃圾回收Entry的队列
+  
   private final Cache delegate;
   private int numberOfHardLinks;
 
@@ -61,6 +71,8 @@ public class SoftCache implements Cache {
   @Override
   public void putObject(Object key, Object value) {
     removeGarbageCollectedItems();
+    // 软引用Entry封装值
+    // SoftEntry所引用的对象被JVM回收的时候， 该软引用就会被加入到与之关联的队列
     delegate.putObject(key, new SoftEntry(key, value, queueOfGarbageCollectedEntries));
   }
 
