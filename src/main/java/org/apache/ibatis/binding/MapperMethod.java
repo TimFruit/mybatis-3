@@ -266,6 +266,8 @@ public class MapperMethod {
       return type;
     }
 
+    // 通过mapperInterface查找对应的mappedStatement,
+    // 如果查找不到, 则查找父类接口
     private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
         Class<?> declaringClass, Configuration configuration) {
       String statementId = mapperInterface.getName() + "." + methodName;

@@ -22,8 +22,12 @@ import java.util.Properties;
  */
 public interface Interceptor {
 
+  // 拦截方法
   Object intercept(Invocation invocation) throws Throwable;
 
+  // FIXME 为target动态生成对应的代理类并返回, 其中代理类的实现方法为本拦截器
+  // InterceptorChain#pluginAll()
+  // Plugin#wrap(Object target, Interceptor interceptor)
   Object plugin(Object target);
 
   void setProperties(Properties properties);
