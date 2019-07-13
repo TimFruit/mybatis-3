@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * 自定义XNode类, 封装对应的node节点, 包括name, body, attrivutes
  * @author Clinton Begin
  */
 public class XNode {

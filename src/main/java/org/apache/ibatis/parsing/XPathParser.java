@@ -40,6 +40,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
+ * 根据指定路径解析查找对应的Node
+ *
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */

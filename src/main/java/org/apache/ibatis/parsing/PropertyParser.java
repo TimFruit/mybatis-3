@@ -18,6 +18,8 @@ package org.apache.ibatis.parsing;
 import java.util.Properties;
 
 /**
+ *
+ * 属性解析器, 主要是将${}对应的占位符替换为properties中的值
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -86,10 +88,12 @@ public class PropertyParser {
             return variables.getProperty(key, defaultValue);
           }
         }
+        //找到key中对应的属性值
         if (variables.containsKey(key)) {
           return variables.getProperty(key);
         }
       }
+      //没有找到, 则返回原来的文本
       return "${" + content + "}";
     }
   }

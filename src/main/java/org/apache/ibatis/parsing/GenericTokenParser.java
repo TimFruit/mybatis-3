@@ -16,12 +16,15 @@
 package org.apache.ibatis.parsing;
 
 /**
+ * 主要是用于查找"${}", "#{}"等替换符
+ *
  * @author Clinton Begin
  */
 public class GenericTokenParser {
 
   private final String openToken;
   private final String closeToken;
+  // handler 主要是用于助理找到占位符, 将占位符替换为对应的属性值
   private final TokenHandler handler;
 
   public GenericTokenParser(String openToken, String closeToken, TokenHandler handler) {
