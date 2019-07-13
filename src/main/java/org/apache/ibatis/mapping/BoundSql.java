@@ -36,7 +36,7 @@ import java.util.Map;
 public class BoundSql {
 
   private final String sql;
-  // 多个参数映射
+  // 多个参数映射, 包括类型
   private final List<ParameterMapping> parameterMappings;
   private final Object parameterObject;
   // additionalParameters 是由动态语句创建的

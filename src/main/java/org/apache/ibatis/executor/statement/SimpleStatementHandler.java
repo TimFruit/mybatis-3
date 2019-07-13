@@ -65,6 +65,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
   @Override
   public void batch(Statement statement) throws SQLException {
     String sql = boundSql.getSql();
+    // 批量执行使用了jdbc提供的接口方法批量添加执行语句
     statement.addBatch(sql);
   }
 
