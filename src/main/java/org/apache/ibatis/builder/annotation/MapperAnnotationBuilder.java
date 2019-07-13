@@ -85,6 +85,7 @@ public class MapperAnnotationBuilder {
     if (!configuration.isResourceLoaded(resource)) { //如果mapper.xml文件没有加载， 则加载解析， 如果<mapper/>配置中先指定了resource, 一般会先加载 mapper.xml
       // 先加载对应的xml配置资源
       //会先解析对应的mapper配置文件, 包括statement
+
       loadXmlResource();
 
       configuration.addLoadedResource(resource);
