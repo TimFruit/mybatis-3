@@ -15,11 +15,11 @@
  */
 package org.apache.ibatis.cache.decorators;
 
+import org.apache.ibatis.cache.Cache;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
-
-import org.apache.ibatis.cache.Cache;
 
 /**
  * Lru (least recently used) cache decorator.
@@ -48,6 +48,7 @@ public class LruCache implements Cache {
   }
 
   public void setSize(final int size) {
+    // 使用linkedHashMap实现LRU, accessOrder=ture, 将会将访问的元素， 移到链表后面， ( 链表开头的即是最老的 )
     keyMap = new LinkedHashMap<Object, Object>(size, .75F, true) {
       private static final long serialVersionUID = 4267176411845948333L;
 
