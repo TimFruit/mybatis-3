@@ -161,6 +161,7 @@ public class Configuration {
   // 语言驱动注册表
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
+  // mapper.xml 封装成mappedStatement
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
       .conflictMessageProducer((savedValue, targetValue) ->
           ". please check " + savedValue.getResource() + " and " + targetValue.getResource());

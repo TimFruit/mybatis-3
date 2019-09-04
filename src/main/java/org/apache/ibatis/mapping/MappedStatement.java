@@ -47,7 +47,9 @@ public final class MappedStatement {
   // 真实的sql语句， 包括参数
   private SqlSource sqlSource;
   private Cache cache;
+  // 参数
   private ParameterMap parameterMap;
+  // 结果集 map
   private List<ResultMap> resultMaps;
   private boolean flushCacheRequired;
   private boolean useCache;

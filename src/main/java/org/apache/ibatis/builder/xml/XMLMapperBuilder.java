@@ -72,6 +72,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     this.resource = resource;
   }
 
+  /**
+   * 主要方法, parse
+   */
   public void parse() {
     if (!configuration.isResourceLoaded(resource)) {
       // 加载解析mapper.xml中各个元素， 包括解析stateemtn
@@ -82,7 +85,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       bindMapperForNamespace();
     }
 
-    // FIXME 这些是干什么的
+    // 加载解析尚未加载完的数据
     parsePendingResultMaps();
     parsePendingCacheRefs();
     parsePendingStatements();
@@ -424,8 +427,8 @@ public class XMLMapperBuilder extends BaseBuilder {
           // Spring may not know the real resource name so we set a flag
           // to prevent loading again this resource from the mapper interface
           // look at MapperAnnotationBuilder#loadXmlResource
-          configuration.addLoadedResource("namespace:" + namespace);
-          configuration.addMapper(boundType);
+          configuration.addLoadedResource("namespace:" + namespace);  // 在configuration添加已加载资源
+          configuration.addMapper(boundType);  // 在configuration添加mapper接口
         }
       }
     }
