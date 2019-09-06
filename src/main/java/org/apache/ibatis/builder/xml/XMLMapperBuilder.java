@@ -431,7 +431,7 @@ public class XMLMapperBuilder extends BaseBuilder {
           // to prevent loading again this resource from the mapper interface
           // look at MapperAnnotationBuilder#loadXmlResource
           configuration.addLoadedResource("namespace:" + namespace);  // 在configuration添加已加载资源
-          configuration.addMapper(boundType);  // 在configuration添加mapper接口
+          configuration.addMapper(boundType);  // 在configuration添加mapper接口, 然后在mapperRegistry中解析添加
         }
       }
     }
