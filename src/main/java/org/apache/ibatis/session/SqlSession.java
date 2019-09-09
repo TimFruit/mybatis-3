@@ -24,6 +24,9 @@ import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
 
 /**
+ * Mybatis API
+ *  三个重要的功能: 1. 执行Sql  2. 获取Mapper  3. 管理事务
+ *
  * The primary Java interface for working with MyBatis.
  * Through this interface you can execute commands, get mappers and manage transactions.
  *

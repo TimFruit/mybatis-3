@@ -45,6 +45,8 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 基类, 封装了常用的操作, 如本地缓存, 获取连接(委派给事务管理器)
+ * 事务操作(是否自动提交, 已在获取SqlSession时使用, 是否提交还是回滚, 由上层调用)
  * @author Clinton Begin
  */
 public abstract class BaseExecutor implements Executor {
@@ -245,6 +247,7 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  //回滚, 最终还是委派给transaction#rollback()
   @Override
   public void rollback(boolean required) throws SQLException {
     if (!closed) {
@@ -332,6 +335,8 @@ public abstract class BaseExecutor implements Executor {
     return list;
   }
 
+  // 在执行器里获取Connection , 最后是委派给Transaction获取,
+  // 事务管理, 即是Connection是否设置自动提交, 以及将事务的回滚调用交给事务管理器管理
   protected Connection getConnection(Log statementLog) throws SQLException {
     Connection connection = transaction.getConnection();
     if (statementLog.isDebugEnabled()) {
