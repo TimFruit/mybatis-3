@@ -26,8 +26,7 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionException;
 
 /**
- * 将jdbc中connection中的事务管理功能抽取封装成对应管理模块, 获取连接, commit(), rollback()
- *
+ * 完全使用jdbc实现事务的所有操作, 包括提交和回滚.
  *
  * {@link Transaction} that makes use of the JDBC commit and rollback facilities directly.
  * It relies on the connection retrieved from the dataSource to manage the scope of the transaction.
